@@ -1,0 +1,7 @@
+{
+  "name": "CardValue AI",
+  "description": "Instantly estimate the value of sports cards using visual AI and real-time market data.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
