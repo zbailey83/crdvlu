@@ -3,7 +3,7 @@ import { CameraView } from './components/CameraView';
 import { AnalysisView } from './components/AnalysisView';
 import { analyzeCardValue } from './services/geminiService';
 import { AppState, AnalysisResult } from './types';
-import { Sparkles, ScanLine } from 'lucide-react';
+import { Sparkles, CircleDashed } from 'lucide-react';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
@@ -31,30 +31,28 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen flex flex-col items-center justify-start py-8 px-4 sm:px-0">
       {/* Mobile-first Layout Container */}
-      <div className="mx-auto max-w-md h-screen flex flex-col bg-slate-950 shadow-2xl relative overflow-hidden">
+      <div className="w-full max-w-md h-[90vh] flex flex-col relative">
         
-        {/* Header - Only show on IDLE for a clean landing, or transparent on others */}
+        {/* Header - Soft Floating Header */}
         {appState === AppState.IDLE && (
-          <header className="p-6 flex items-center justify-between z-10">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <ScanLine className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-                CardValue AI
-              </h1>
+          <header className="mb-8 flex flex-col items-center justify-center animate-float">
+            <div className="w-16 h-16 bg-white clay-card flex items-center justify-center mb-4">
+              <CircleDashed className="w-8 h-8 text-[#d4b3ff]" />
             </div>
-            <div className="px-3 py-1 bg-blue-900/30 border border-blue-800/50 rounded-full text-xs font-medium text-blue-300 flex items-center gap-1">
-               <Sparkles className="w-3 h-3" />
-               Beta
-            </div>
+            <h1 className="text-4xl font-extrabold text-[#2d2d3a] tracking-tight text-center">
+              CardValue AI
+            </h1>
+            <p className="text-[#6b6b80] font-medium mt-1 flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-full text-xs">
+               <Sparkles className="w-3 h-3 text-[#ffd4c4]" />
+               Smart Market Estimator
+            </p>
           </header>
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 relative">
+        <main className="flex-1 relative flex flex-col h-full overflow-hidden">
           {appState === AppState.IDLE && (
              <CameraView onImageCapture={handleImageCapture} />
           )}
@@ -68,13 +66,6 @@ export default function App() {
             />
           )}
         </main>
-        
-        {/* Background Gradients for Aesthetics */}
-        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-            <div className="absolute top-[-10%] left-[-20%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px]"></div>
-            <div className="absolute bottom-[-10%] right-[-20%] w-[400px] h-[400px] bg-cyan-600/10 rounded-full blur-[100px]"></div>
-        </div>
-
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { AnalysisResult } from '../types';
-import { ArrowLeft, ExternalLink, RefreshCw, DollarSign, Search } from 'lucide-react';
+import { ArrowLeft, ExternalLink, RefreshCw, BadgeDollarSign, Info } from 'lucide-react';
 
 interface AnalysisViewProps {
   image: string;
@@ -12,81 +12,71 @@ interface AnalysisViewProps {
 
 export const AnalysisView: React.FC<AnalysisViewProps> = ({ image, result, loading, onReset }) => {
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-slate-900">
-      {/* Header Image Area */}
-      <div className="relative h-1/3 min-h-[250px] w-full bg-black shrink-0">
+    <div className="flex flex-col h-full space-y-6">
+      {/* Captured Image Preview - Soft Inset Look */}
+      <div className="relative h-1/3 min-h-[220px] w-full clay-card overflow-hidden shrink-0 border-4 border-white shadow-inner">
         <img 
           src={image} 
           alt="Captured Card" 
-          className="w-full h-full object-contain opacity-80"
+          className={`w-full h-full object-cover transition-opacity duration-500 ${loading ? 'opacity-40 grayscale' : 'opacity-100'}`}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
         
-        <button 
-          onClick={onReset}
-          className="absolute top-4 left-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/70 transition-colors z-20"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-
         {loading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-10">
-            <div className="w-full max-w-[200px] h-1 relative overflow-hidden bg-slate-700 rounded-full mb-4">
-               <div className="absolute top-0 left-0 h-full w-1/2 bg-blue-500 animate-[shimmer_1s_infinite_linear]" style={{animationName: 'scan'}}></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/20 backdrop-blur-sm">
+            <div className="w-16 h-16 bg-white clay-card flex items-center justify-center animate-spin-slow">
+              <RefreshCw className="w-8 h-8 text-[#d4b3ff] animate-spin" />
             </div>
-            <div className="scanner-line absolute top-1/2 w-full opacity-50"></div>
-            <p className="text-blue-400 font-semibold animate-pulse">Analyzing Market Data...</p>
+            <p className="mt-4 text-[#2d2d3a] font-bold text-lg animate-pulse">Calculating Value...</p>
           </div>
         )}
+
+        <button 
+          onClick={onReset}
+          className="absolute top-4 left-4 p-3 bg-white clay-button text-[#2d2d3a] z-20"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-900 no-scrollbar">
+      <div className="flex-1 overflow-y-auto no-scrollbar space-y-6 pb-12">
         {loading ? (
-          <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-slate-800 rounded w-3/4"></div>
-            <div className="h-4 bg-slate-800 rounded w-1/2"></div>
-            <div className="h-32 bg-slate-800 rounded w-full mt-6"></div>
+          <div className="space-y-6">
+            <div className="clay-card p-6 h-32 animate-pulse bg-white/50 border-white"></div>
+            <div className="clay-card p-6 h-64 animate-pulse bg-white/30 border-white"></div>
           </div>
         ) : result ? (
-          <div className="space-y-6 pb-20">
-            {/* Main Result Card */}
-            <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 shadow-xl">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="p-2 bg-green-500/20 rounded-lg text-green-400">
-                   <DollarSign className="w-6 h-6" />
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Value Badge Card */}
+            <div className="bg-[#fef9f5] clay-card p-6 border-2 border-white">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-[#ffd4c4] clay-card flex items-center justify-center shrink-0">
+                   <BadgeDollarSign className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                   <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Estimated Value</h3>
-                   <div className="text-white text-lg font-medium prose prose-invert prose-p:my-0 prose-headings:my-1 max-w-none">
-                     {/* We rely on the markdown to render the value nicely, but we can wrap it */}
-                     <ReactMarkdown 
-                        components={{
-                            p: ({node, ...props}) => <span {...props} />, // Flatten paragraphs for this preview section if needed, or keep standard
-                            strong: ({node, ...props}) => <span className="text-green-300 font-bold" {...props} />
-                        }}
-                     >
-                      {/* Extract just the value line if possible, or show full text. 
-                          For this demo, we show the full markdown below, but here we could be clever.
-                          Let's just show a badge 'Market Analysis Complete' */}
-                      Market Analysis Complete
-                     </ReactMarkdown>
+                   <h3 className="text-[#6b6b80] text-xs font-bold uppercase tracking-wider">Est. Market Value</h3>
+                   <div className="text-[#2d2d3a] text-xl font-extrabold leading-tight">
+                      Price Analysis Ready
                    </div>
                 </div>
               </div>
             </div>
 
-            {/* Detailed Markdown Output */}
-            <div className="prose prose-invert prose-blue max-w-none">
-              <ReactMarkdown>{result.text}</ReactMarkdown>
+            {/* Analysis Text Card */}
+            <div className="clay-card bg-white p-8">
+              <div className="prose prose-slate max-w-none text-[#2d2d3a] font-medium leading-relaxed
+                prose-headings:font-bold prose-headings:text-[#2d2d3a] 
+                prose-p:text-[#6b6b80] prose-strong:text-[#2d2d3a] prose-strong:font-bold">
+                <ReactMarkdown>{result.text}</ReactMarkdown>
+              </div>
             </div>
 
-            {/* Sources / Grounding */}
+            {/* Sources */}
             {result.groundingChunks && result.groundingChunks.length > 0 && (
-              <div className="mt-8 border-t border-slate-800 pt-6">
-                <h4 className="text-sm font-semibold text-slate-400 flex items-center gap-2 mb-4">
-                  <Search className="w-4 h-4" />
-                  Price Sources & References
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold text-[#6b6b80] px-4 flex items-center gap-2 uppercase tracking-widest">
+                  <Info className="w-4 h-4" />
+                  Market Data Sources
                 </h4>
                 <div className="grid gap-3">
                   {result.groundingChunks.map((chunk, idx) => {
@@ -97,15 +87,19 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ image, result, loadi
                         href={chunk.web.uri}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between p-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors border border-slate-700/50 group"
+                        className="clay-card bg-white/80 p-4 flex items-center justify-between hover:bg-white transition-all group border border-transparent hover:border-white"
                       >
-                        <div className="flex-1 min-w-0 pr-3">
-                          <p className="text-sm font-medium text-blue-300 truncate group-hover:text-blue-200">
-                            {chunk.web.title || "Market Source"}
+                        <div className="flex-1 min-w-0 pr-4">
+                          <p className="text-sm font-bold text-[#2d2d3a] truncate">
+                            {chunk.web.title || "Market Result"}
                           </p>
-                          <p className="text-xs text-slate-500 truncate">{new URL(chunk.web.uri).hostname}</p>
+                          <p className="text-[10px] text-[#b8b8c7] font-bold uppercase tracking-tighter mt-0.5">
+                            {new URL(chunk.web.uri).hostname}
+                          </p>
                         </div>
-                        <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-white" />
+                        <div className="w-8 h-8 clay-card bg-[#d4b3ff]/20 flex items-center justify-center shrink-0">
+                          <ExternalLink className="w-4 h-4 text-[#d4b3ff]" />
+                        </div>
                       </a>
                     );
                   })}
@@ -113,15 +107,19 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ image, result, loadi
               </div>
             )}
             
-             <div className="text-xs text-slate-600 mt-8 text-center px-4">
-              *Estimates are based on available online data. Actual value may vary based on condition (centering, corners, edges, surface).
-            </div>
+             <p className="text-[10px] font-bold text-[#b8b8c7] text-center px-10 uppercase leading-normal pt-4">
+              AI-generated estimates are for informational use only. Market prices fluctuate daily.
+            </p>
           </div>
         ) : (
-           <div className="flex flex-col items-center justify-center h-full text-slate-400">
-              <p>Something went wrong.</p>
-              <button onClick={onReset} className="mt-4 text-blue-400 flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4" /> Try Again
+           <div className="clay-card bg-white p-12 flex flex-col items-center justify-center text-center space-y-4">
+              <div className="w-16 h-16 bg-red-50 clay-card flex items-center justify-center">
+                 <RefreshCw className="w-8 h-8 text-red-400" />
+              </div>
+              <h3 className="text-xl font-bold text-[#2d2d3a]">Analysis Failed</h3>
+              <p className="text-[#6b6b80] text-sm font-medium">We couldn't reach the market database. Please try a different photo.</p>
+              <button onClick={onReset} className="clay-button bg-[#d4b3ff] text-white py-3 px-8 font-bold mt-4">
+                  Retry Scan
               </button>
            </div>
         )}

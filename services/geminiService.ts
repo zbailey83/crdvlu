@@ -5,27 +5,22 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const analyzeCardValue = async (base64Image: string): Promise<AnalysisResult> => {
   try {
-    const model = 'gemini-2.5-flash';
+    const model = 'gemini-3-flash-preview';
     
-    // Split the base64 string to get the actual data
-    // Format: "data:image/jpeg;base64,..."
     const base64Data = base64Image.split(',')[1];
     const mimeType = base64Image.split(';')[0].split(':')[1] || 'image/jpeg';
 
     const prompt = `
-      Identify the sports card in this image with high precision.
-      Include the Player Name, Year, Set, Card Number, and any variation (e.g., Refractor, Holo, Base).
+      Identify the collectible item or sports card in this image with high precision.
+      Include the Name, Year, Manufacturer/Set, and any unique features.
       
-      Then, search for current market listings and recently sold prices (eBay, PWCC, Goldin, 130point, etc.) for this specific card.
-      Assume the card is in Raw/Ungraded Near Mint condition unless it is clearly inside a graded slab (PSA, BGS, SGC).
+      Then, search for current market listings and recently sold prices (eBay, specialized auction houses, etc.) for this specific item.
+      Provide a concise response in Markdown with:
+      1. **Identification**: Precise name and year.
+      2. **Est. Value Range**: Realistic USD range for the condition seen.
+      3. **Market Context**: Why is it worth this much? (recent trends).
       
-      Provide a response formatted nicely in Markdown:
-      1. **Card Identity**: The full specific name of the card.
-      2. **Estimated Value Range**: A realistic low and high price range in USD.
-      3. **Market Analysis**: A brief explanation of the value based on recent sales found.
-      4. **Condition Note**: Mention if you priced it as Raw or Graded based on the image.
-      
-      Be concise but accurate.
+      Be professional and helpful.
     `;
 
     const response = await ai.models.generateContent({
@@ -45,13 +40,11 @@ export const analyzeCardValue = async (base64Image: string): Promise<AnalysisRes
       },
       config: {
         tools: [{ googleSearch: {} }],
-        // Note: responseMimeType is NOT allowed when using googleSearch
+        thinkingConfig: { thinkingBudget: 0 } // Flash response optimization
       },
     });
 
-    const text = response.text || "Could not analyze the image. Please try again.";
-    
-    // Extract grounding chunks if available
+    const text = response.text || "Could not analyze the image.";
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
 
     return {
@@ -61,6 +54,6 @@ export const analyzeCardValue = async (base64Image: string): Promise<AnalysisRes
 
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("Failed to analyze card. Please try again.");
+    throw new Error("Failed to analyze. Please try again.");
   }
 };

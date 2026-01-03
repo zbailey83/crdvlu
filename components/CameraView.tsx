@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Image as ImageIcon, Upload } from 'lucide-react';
+import { Camera, Upload, ImageIcon as ImageFile } from 'lucide-react';
 
 interface CameraViewProps {
   onImageCapture: (imageBase64: string) => void;
@@ -46,62 +46,56 @@ export const CameraView: React.FC<CameraViewProps> = ({ onImageCapture }) => {
 
   return (
     <div 
-      className={`flex flex-col items-center justify-center h-full p-6 transition-colors ${dragActive ? 'bg-slate-800' : 'bg-transparent'}`}
+      className={`flex flex-col items-center justify-center flex-1 transition-all duration-300 ${dragActive ? 'scale-105' : ''}`}
       onDragEnter={handleDrag}
       onDragLeave={handleDrag}
       onDragOver={handleDrag}
       onDrop={handleDrop}
     >
-      <div className="relative w-full max-w-md aspect-[3/4] border-2 border-dashed border-slate-600 rounded-2xl flex flex-col items-center justify-center bg-slate-900/50 backdrop-blur-sm overflow-hidden group">
+      <div className="w-full clay-card flex flex-col items-center justify-center p-8 space-y-8 relative overflow-hidden flex-1">
         
-        {/* Animated Scanner Effect Hint */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-           <div className="w-full h-full bg-[linear-gradient(transparent,rgba(59,130,246,0.1),transparent)] translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-[2s] ease-in-out"></div>
-        </div>
-
-        <div className="text-center space-y-6 z-10 p-6">
-          <div className="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/30">
-            <Camera className="w-10 h-10 text-blue-400" />
+        <div className="text-center space-y-4">
+          <div className="w-24 h-24 bg-[#ffd4c4]/30 clay-card flex items-center justify-center mx-auto mb-2">
+            <Camera className="w-12 h-12 text-[#2d2d3a]" />
           </div>
           
-          <h2 className="text-2xl font-bold text-white">Scan a Card</h2>
-          <p className="text-slate-400 max-w-xs mx-auto">
-            Take a clear photo of your sports card to instantly get details and market value estimates.
+          <h2 className="text-3xl font-bold text-[#2d2d3a]">Ready to Scan?</h2>
+          <p className="text-[#6b6b80] max-w-[240px] mx-auto text-sm font-medium">
+            Place your card on a flat surface and take a clear picture.
           </p>
-
-          <div className="grid grid-cols-2 gap-4 w-full mt-8">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center justify-center gap-2 py-4 px-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-blue-900/50"
-            >
-              <Camera className="w-5 h-5" />
-              <span>Camera</span>
-            </button>
-            
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center justify-center gap-2 py-4 px-4 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white rounded-xl font-semibold transition-all"
-            >
-              <Upload className="w-5 h-5" />
-              <span>Upload</span>
-            </button>
-          </div>
         </div>
 
-        {/* Hidden Input */}
+        <div className="flex flex-col w-full gap-4 pt-4">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="clay-button bg-[#d4b3ff] py-5 px-8 text-white text-lg font-bold flex items-center justify-center gap-3 w-full"
+          >
+            <Camera className="w-6 h-6" />
+            Take Photo
+          </button>
+          
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="clay-button bg-white py-4 px-8 text-[#6b6b80] text-md font-bold flex items-center justify-center gap-3 w-full border border-gray-100"
+          >
+            <Upload className="w-5 h-5" />
+            Upload File
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#b8b8c7] uppercase tracking-widest pt-4">
+          <ImageFile className="w-4 h-4" />
+          Supports All Card Types
+        </div>
+
         <input
           type="file"
           accept="image/*"
-          capture="environment" // Mobile-friendly: prompts camera
+          capture="environment"
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
         />
-      </div>
-      
-      <div className="mt-8 flex items-center gap-2 text-sm text-slate-500">
-        <ImageIcon className="w-4 h-4" />
-        <span>Supports JPG, PNG, WEBP</span>
       </div>
     </div>
   );
